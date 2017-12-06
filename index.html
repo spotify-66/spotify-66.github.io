@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>AC209b Spotify Playlist Analysis</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="css/scrolling-nav.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+
+  </head>
+
+  <body id="page-top">
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
+      <div class="container">
+        <a class="navbar-brand js-scroll-trigger" href="#page-top">Spotify Playlist Analysis</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="#overview">Overview</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="#eda">EDA</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="#follower">Followers Prediction</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="#playlist">Playlist Generator</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="#conclusion">Conclusion</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <header class="text-white">
+      <div class="container text-center">
+        <h1>AC209b Final Project</h1>
+        <p class="lead">Spotify playlist followers prediction and algorithmic playlist generation</p>
+      </div>
+    </header>
+
+    <section id="overview">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 mx-auto">
+            <h1>Overview</h1><br>
+            <h4>Project Statement</h4>
+            <p>The basic scope of the project is that given a Spotify playlist, to build a regression model to predict the success of the playlist measured by the potential number of followers. With this model, we can generate a high-quality playlist, given a specified genre and a pool of tracks to choose from.</p>
+            <p>To achieve the task of predicting followers, we can train a regression model on a set of labelled training data, with explanatory variables being a set of features derived from the playlist and its tracks, and response variable being the follower of the playlist.
+              To generate a playlist, we will first take in inputs from the user, and then use our followers prediction model to identify the playlist that is predicted to have the most followers.
+            </p>
+
+            <br><br>
+            <h4>Data Description</h4>
+            <p>We chose 24 most popular genres from in Spotify, and collected information of top 50 playlist results with Spotify API. For each playlist, we collected the features of its basic information (e.g., number of followers), and also obtained a list of tracks (i.e., songs) within the playlist. Finally, we sent another query to collect audio features for each track.
+            </p>
+            <p>With Spotify API, we collected and stored three data sets in JSON format, they are genres_playlists (genres and corresponding playlists), playlists_tracks (playlists and corresponding tracks) and tracks_features (tracks and corresponding features). We merged three dataset into a single data frame with the combination of <track_id, playlist_id, genre> being the unique identifier of an observation.
+            </p>
+
+            <table class="table table-hover table-striped">
+              <caption>Table 1. All variables in the combined data frame</caption>
+              <thead>
+              <tr>
+                <th scope="col">Variable Name</th>
+                <th scope="col">Type</th>
+                <th scope="col">Description</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr>
+                <th scope="row">acousticness</th>
+                <td>Quantitative, float</td>
+                <td>Sound through acoustic, as opposed to electric</td>
+              </tr>
+              <tr>
+                <th scope="row">danceability</th>
+                <td>Quantitative, float</td>
+                <td>Dance friendly measurement</td>
+              </tr>
+              <tr>
+                <th scope="row">duration_ms</th>
+                <td>Quantitative, float</td>
+                <td>Total length of music in second</td>
+              </tr>
+              <tr>
+                <th scope="row">energy</th>
+                <td>Quantitative, float</td>
+                <td>Identify the different pitches and frequencies, and create high- and low-pitch sound waves</td>
+              </tr>
+              <tr>
+                <th scope="row">instrumentalness</th>
+                <td>Quantitative, float</td>
+                <td>The variety of instruments appeared</td>
+              </tr>
+              <tr>
+                <th scope="row">key</th>
+                <td>Categorical, int</td>
+                <td>Scale of music, a set of sharp (♯), flat (♭)</td>
+              </tr>
+              <tr>
+                <th scope="row">liveness</th>
+                <td>Quantitative, float</td>
+                <td>Dynamically performed assertion of human presence within a technological network of communication</td>
+              </tr>
+              <tr>
+                <th scope="row">loudness</th>
+                <td>Quantitative, float</td>
+                <td>Sound pressure</td>
+              </tr>
+              <tr>
+                <th scope="row">mode</th>
+                <td>Categorical, int</td>
+                <td>Descending diatonic scales in the music of classical Greece</td>
+              </tr>
+              <tr>
+                <th scope="row">speechiness</th>
+                <td>Quantitative, float</td>
+                <td>measures the number of spoken words</td>
+              </tr>
+              <tr>
+                <th scope="row">tempo</th>
+                <td>Categorical, int</td>
+                <td>timing of music, or the speed</td>
+              </tr>
+              <tr>
+                <th scope="row">time_signature</th>
+                <td>Categorical, int</td>
+                <td>Beats (pulses) contained in each measure (bar)</td>
+              </tr>
+              <tr>
+                <th scope="row">valence</th>
+                <td>Quantitative, float</td>
+                <td>intrinsic attractiveness or aversiveness of an event, object, or situation</td>
+              </tr>
+              <tr>
+                <th scope="row">genre</th>
+                <td>Categorical, str</td>
+                <td>Genre of the track</td>
+              </tr>
+              <tr>
+                <th scope="row">popularity</th>
+                <td>Quantitative, int</td>
+                <td>Popularity measurement, range from 1 to 100</td>
+              </tr>
+              <tr>
+                <th scope="row">followers</th>
+                <td>Quantitative, int</td>
+                <td>Number of followers</td>
+              </tr>
+              </tbody>
+            </table>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="eda" class="bg-light">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 mx-auto">
+            <h1>Exploratory Data Analysis</h1><br>
+            <h4>Distribution of predictors and number of followers</h4>
+            <p>We generated a barplot of the average values of different audio features for different genres. In order for the plot to be more informative, we normalized the range of each feature to be (0, 1). The main idea between this visualization is to show that different genres have different profiles of audio features, which determined their uniqueness.
+            </p>
+            <p class="img"><img src="img/barplot.png" height="300" width="750"></p>
+            <p class="caption">Figure 1. Average values of audio features for different genres</p>
+            <p>For example, funk music has high danceability, jazz music has high instrumentalness, hip-hop has high speechiness, etc. This tells us these audio features can be very distinguishing.
+              We also want to understand the distribution of the response variable - number of followers for each playlist. Thus, we plotted a set of boxplots of followers for each genre. In general, pop, hip-hop, classical and rock have relatively higher median and variance.
+            </p>
+            <p>We also want to understand the distribution of the response variable - number of followers for each playlist. Thus, we plotted a set of boxplots of followers for each genre. In general, pop, hip-hop, classical and rock have relatively higher median and variance.
+            </p>
+            <p class="img"><img src="img/boxplot.png" height="300" width="750"></p>
+            <p class="caption">Figure 2. Distribution of number of followers for different genres</p>
+            <br><br>
+            <h4>Relationship between predictors and number of followers</h4>
+            <p>With an aim to identify useful predictors for building regression models, we plotted scatter plot of the number of followers with respect to different predictors. Here possible predictors include audio features of the tracks within the playlist, and the popularity of them (measured by how much it has been played on Spotify). However, as each song in a playlist can have a set of values, we will need some method of aggregation to construct playlist-level features. Here, we explored two ways, using mean to capture overall level, and using standard deviation to capture diversity within the playlist. In order to show clearer relationships, the graphs below might exclude some outliers that affect the visual.
+            </p>
+            <p>When using mean as the aggregation method, we observe that some audio features, such as loudness and popularity (Fig 3), positively contribute to the number of followers. We also observed that instrumentalness is negatively correlated with number of followers. For tempo, it seems to have an interval that correlates more to high number of followers. This calls for feature engineering in subsequent steps, such as discretization of the tempo variable.
+            </p>
+            <img src="img/scatter-popularity.png" align="left" height="160" width="230">
+            <img src="img/scatter-instrumentalness.png" align="left" height="160" width="230">
+            <img src="img/scatter-mode-std.png" align="left" height="160" width="230">
+            <p class="caption">Figure 3. Scatterplots of number of followers against predictors. (left: average popularity, middle: average instrumentalness, right: standard deviation of mode)</p>
+            <br><p>When using standard deviation, we can capture whether feature diversity in a playlist has relationship with the playlist follower numbers. So if we observe skewness in the plot, it means that either diversity of homogeneity is favorable to gaining higher followers. We observe that when a playlist has diversity in mode is positively correlated with the number of followers. This makes sense as mode directly determines the mode of the song. A relatively large diversity of tempo also seems to give rise to high followers, as the distribution is right-skewed.
+            </p>
+
+            <br><br>
+            <h4>Relationship between predictors and number of followers for different genres
+            </h4>
+            <p>As in the end we need to generate playlist for a specified genre, the model should be able to adapt to different genres. Therefore, we want to explore that for playlist in different genres, whether there is interaction between genres and the predictors’ correlation with the number of followers. Thus, we created a heatmap shown below. Each cell represents the correlation between predictors (represented by vertical axis) in a particular genre (represented by horizontal axis) and the number of followers of the playlist.
+            </p>
+            <p class="img"><img src="img/heatmap.png" height="260" width="700"></p>
+            <p class="caption">Figure 4. Heatmap of correlation of predictors with number of followers by genres</p>
+            <p>There is plenty of information in the heatmap. To name a few, popularity has positive correlation with followers across genres; speechiness is positively correlated with followers in soul music; valence is negatively correlated with followers in pop music; the correlation for different features is more bipolar in jazz, etc. This allows us to create interactions in the regression model to predict number of followers.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="follower">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 mx-auto">
+            <h1>Followers Prediction</h1><br>
+            <h4>Data Transformation</h4>
+            <p>When we explore the distribution of the response variable, we found out that the distribution of playlist followers is heavily left-skewed. After transforming it to its logarithm scale, the distribution becomes much more normal. Therefore, in all our following modeling practices, we adopted the log scale of the original response variable.</p>
+
+            <img src="img/histogram1.png" height="220" width="350">
+            <img src="img/histogram2.png" height="220" width="350">
+            <p class="caption">Figure 5. Histogram of playlist followers, before and after log transformation</p>
+            <br>
+            <h4>Baseline Model</h4>
+            <p>As a first step, we want to have an initial model that uses the most basic features to benchmark against.</p>
+            <br>
+            <table class="table table-hover">
+              <caption>Table 1. Baseline model information</caption>
+              <tbody>
+              <tr>
+                <th scope="row">Model</th>
+                <td>Linear Regression</td>
+              </tr>
+              <tr>
+                <th scope="row">Preprocessing</th>
+                <td colspan="2">None</td>
+              </tr>
+              <tr>
+                <th scope="row">Feature</th>
+                <td>Mean audio features, mean popularity</td>
+              </tr>
+              <tr>
+                <th scope="row">Training R Squared</th>
+                <td>0.0670</td>
+              </tr>
+              <tr>
+                <th scope="row">Testing R Squared</th>
+                <td>0.0491</td>
+              </tr>
+              </tbody>
+            </table>
+
+            <br>
+            <h4>Feature Engineering</h4>
+            <p>We went through multiple iterations of feature engineering, with an aim to extract more useful information from the collected data.</p>
+            <ol>
+              <li><strong>One-hot encoding of categorical features.</strong> In the audio features, key and time_signature are all categorical variables that do not have any ordinal relationships. Therefore, they require one-hot encoding to prevent them to be interpreted as continuous variables by our regression model. From the heatmap in our EDA, we also know that some of the genre might have a significant correlation with number of followers, and thus should also be taken into account as our feature in the model.</li>
+              <li><strong>Top singers count.</strong> As a continuation of the maximum track popularity feature, we find that people sometimes are likely to follow a playlist if the playlist contains the artists/singers they like. We think that the number of followers of a playlist could have a high correlation with the number of top artists/singers in that playlist. Therefore we want to build a new predictor that measure how many songs in the playlist falls under this category. For this new feature we scraped the Billboard website to get the 100 most popular artists and also matched the names of these artists with the artist id from Spotify. Based on this list, we computed how many songs in the playlist belong to the 100 artists.</li>
+              <li><strong>Maximum track popularity.</strong> Based on our original Spotify experience, it is very common that people sometimes follow a specific playlist through a particular song they are looking for. It is also very common that certain playlists were recommended to users by Spotify's recommendation system because users listen to the most popular song in that playlist. Therefore, it is very likely that the most popular track in a playlist will affect the popularity of this playlist.</li>
+              <li><strong>Number of tracks, artists and albums. </strong> Playlist serves an important purpose of broadening one's horizon of songs. Therefore, a playlist's diversity, measured by the number of albums and artists, could potentially affect its followers. Playlists with larger number of albums and artists are potentially more popular. For example, a playlist that is dominated by 2 or 3 popular singers might be less valuable than a playlist that has songs from a wide range of artists. The same applies to albums. For number of tracks, this is even a more important indicator of the richness and diversity of a playlist.</li>
+              <li><strong>Standard deviations of audio features.</strong> From our EDA, we reckoned that sometimes aggregation methods other than mean could also contain useful information about a playlist. For example, a playlist that has high standard deviation in mode might lead to higher diversity in mood.</li>
+            </ol>
+
+            <p>With each new addition, we recorded its corresponding effect in model performance. These models are still built with linear regression.</p>
+            <br>
+            <table class="table table-hover table-striped">
+              <caption>Table 2. Training and testing R squared as a result of new features</caption>
+              <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">New Feature</th>
+                <th scope="col">Training R Squared</th>
+                <th scope="col">Testing R Squared</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr>
+                <th scope="row">0</th>
+                <td>-</td>
+                <td>0.0670</td>
+                <td>0.0491</td>
+              </tr>
+              <tr>
+                <th scope="row">1</th>
+                <td>One-hot encoding of categorical features</td>
+                <td>0.4705</td>
+                <td>0.4494</td>
+              </tr>
+              <tr>
+                <th scope="row">2</th>
+                <td>Top singers count</td>
+                <td>0.4767</td>
+                <td>0.4588</td>
+              </tr>
+              <tr>
+                <th scope="row">3</th>
+                <td>Maximum track popularity</td>
+                <td>0.4788</td>
+                <td>0.4616</td>
+              </tr>
+              <tr>
+                <th scope="row">4</th>
+                <td>Number of tracks, artists and albums</td>
+                <td>0.5012</td>
+                <td>0.4953</td>
+              </tr>
+              <tr>
+                <th scope="row">5</th>
+                <td>Standard deviations of audio features</td>
+                <td>0.5107</td>
+                <td>0.5098</td>
+              </tr>
+              </tbody>
+            </table>
+
+            <div id="feature-eng-line-plot"></div>
+            <p class="caption">Figure 6. Evolution of R Squared during feature engineering</p>
+
+            <p>As a last step of feature engineering, we added in the interaction terms between <em>genre</em> and all other predictors. This is motivated by our EDA that for different genres, different predictors might have particularly high or low effect than they normally do. Although train test R Squared 0.68, test set R Squared dropped to below 0.3. This is a clear sign for overfitting. Thus, in the next section, we resort to PCA and feature selection to reduce the dimension of the data matrix.</p>
+            <br><br>
+            <h4>Dimensionality Reduction</h4>
+            <br>
+            <h5>Principal Component Analysis (PCA)</h5>
+            <p>We used a 5-fold cross validation scheme to select the optimal number of principal components.</p>
+
+            <div id="pca-cv"></div>
+            <p class="caption">Figure 7. Cross validation training and testing R Squared for different n_components</p>
+
+
+            <p>Now, as the data dimension has been sufficiently reduced, we built various regression models and compared their test set performance.</p>
+            <div id="pca-models-bar"></div><br>
+            <p class="caption">Figure 8. After PCA: test set R Squared comparison</p><br><br>
+
+            <h5>Forward Feature Selection</h5>
+            <p>Another way to shrink feature space is through forward feature selection. We used linear regression's BIC score as the criterion for choosing features. Below we printed the change in BIC with increasing amount of features in the model.</p>
+            <div id="forward-feature-bic"></div>
+            <p class="caption">Figure 9. Evolution of BIC with increasing number of features</p>
+            <br>
+            <p>We also enumerated the top 10 features that are first selected into the model, many of which are highly interpretable.</p>
+            <table class="table table-hover table-striped">
+              <caption>Table 3. Top 10 features selected by forward feature selection</caption>
+              <thead>
+              <tr>
+                <th scope="col">Sequence</th>
+                <th scope="col">Feature Name</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr>
+                <th scope="row">1</th>
+                <td>genre_hollywoods x max_popularity</td>
+              </tr>
+              <tr>
+                <th scope="row">2</th>
+                <td>genre_k-pop x speechiness</td>
+              </tr>
+              <tr>
+                <th scope="row">3</th>
+                <td>genre_opera</td>
+              </tr>
+              <tr>
+                <th scope="row">4</th>
+                <td>genre_pop x popularity</td>
+              </tr>
+              <tr>
+                <th scope="row">5</th>
+                <td>genre_rock x popularity</td>
+              </tr>
+              <tr>
+                <th scope="row">6</th>
+                <td>genre_classical x popularity</td>
+              </tr>
+              <tr>
+                <th scope="row">7</th>
+                <td>genre_hip-hop x popularity</td>
+              </tr>
+              <tr>
+                <th scope="row">8</th>
+                <td>genre_house x popularity</td>
+              </tr>
+              <tr>
+                <th scope="row">9</th>
+                <td>genre_indie x num_artists</td>
+              </tr>
+              <tr>
+                <th scope="row">10</th>
+                <td>popularity_std</td>
+              </tr>
+              </tbody>
+            </table><br>
+            <p>For example, hollywood playlist depends highly on tracks' popularity; opera playlist might inherent receive lower number of followers; rap music has distinct interaction with average valence of tracks. As expected, we also see many genres have interaction with popularity, given that although popularity is contributive in general, it still has different extent of contribution depending on the genres.</p>
+            <p>At last, we also compared the test set performance across different regression models.</p>
+            <div id="forward-models-bar"></div><br>
+            <p class="caption">Figure 10. After forward feature selection: test set R Squared comparison</p>
+            <br><br>
+            <h4>Feed-Forward Neural Network</h4><br>
+            <p>After using the approaches above discussed in class, we also implemented a feed forward neural network (FNN). Our FNN used two hidden layers, with linear function between each two layers. After attempting several activation functions of two hidden layers, we found that Tanh on the first hidden layer and sigmoid function on the second hidden layer provides the best performance on the test dataset. Although it did not achieve the best R2 score than the best ensemble models above after feature transformations, it performed much better than most models (e.g., Linear regressor, Elastic Net regression) given the same feature data before dimensionality reduction. Moreover, it fits relatively faster than the best ensemble models such as Random Forest regressor, and saves a huge amount of time of manual feature engineering.</p>
+            <div id="fnn-r2"></div>
+            <p class="caption">Figure 11. Evolution of testing R Squared with epoch</p><br>
+            <p>We fitted the FNN on both the data before and after PCA. The two versions achieve almost identity final test set R Squared. This shows neural network's capability of control overfitting through its hidden layer and choice of activation function.</p>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="playlist" class="bg-light">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 mx-auto">
+            <h1>Playlist Generator</h1><br>
+            <p>With a followers prediction model in place, what can we do with it? A direct application is to algorithmically generate a playlist out of many track candidates.</p>
+            <p>The problem comes in when the pool of candidates is too large, which is true for Spotify. Therefore, we will need some heuristic approach to help us narrow down the search space. Here we will explore three approaches:</p>
+            <ol>
+              <li><strong>Exhaustive search with track-level filtering.</strong> <br>From our modeling, we understand that popularity is a key influencer of playlist followers. Therefore, we can use tracks' individual popularity as a criterion to do initial filtering of tracks. After this, we iterate through all combinations of the narrowed-down pool and use our followers prediction model an evaluation function to select the highest-scoring combination.</li>
+              <li><strong>Greedy search.</strong><br>In this approach, we start with an empty playlist. At each step, we try different tracks to the existing playlist, and select the track that gives us the most improvement based on our followers prediction model.</li>
+            </ol>
+            <p>In general, our playlist generator has the signature of <em>playlist_generator(library, model, genre, length)</em>. <em>Library</em> stands for all the track candidates; <em>model</em> gives the followers prediction model; <em>genre</em> and <em>length</em> specify the genre and length of the playlist to be generated.</p>
+
+            <div id="generator-followers-bar"></div><br>
+            <p class="caption">Figure 12. Comparison of different playlist generation approaches</p>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="conclusion">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 mx-auto">
+            <h1>Conclusion</h1><br>
+            <p>In this project, we had a chance to explore the entire process of data analysis: from data crawling, data cleaning, EDA, to building models, tuning models and model selections. Walking through this complete process as a group gave us a better insight in data science. We have met many obstacles throughout the process and we are very glad that we overcame all of them.
+            </p>
+            <p>When first approaching this project, all we were considering was feature engineering and model designs, we were not too prepared with crawling the data. This actually was gave us many troubles. Subject to the access time limit of Spotify api, the data crawling turned out to be very time consuming. We untimately decided to automate every step of our crawling code and host it on an AWS server to finish the crawling job. The whole crawling script took 48 hours to finish its job and gave us ~350,000 tracks and ~4400 playlists in 24 different genres. <strong>The careful design of data crawling actually saved us a lot of time on data cleaning.</strong> After merging the dataframes we had, we ended up only dropping several row of data with 'nan' term introduced in the aggregation of our feature engineering step.
+            </p>
+            <p>After that, we came to EDA as well as feature engineering. We find EDA to be extremely useful to the feature engineering. <strong>Most of our features are actually designed with the knowledge of our EDA.</strong> For example, we had a large heatmap showing the correlations of audio features and followers in different genres. We found <strong>many genres' correlations with number of followers are very sensitive to the changes in audio features</strong>. This gave us a very important motivation to design the interaction features between genres and audio features. Also, we found the <strong>total number of tracks in a playlist has a very high correlation with followers</strong>. This also turned out to be a very powerful feature as we reported previously in the notebook. We also made use of alternative data sources to contruct new features. Specifically, we scraped the Billboard top 100 singers to include top singers count as a predictor, which also helped the model to some extent. As we shown in the notebook, every new feature we introduced to the model resulted in an increase in the R Squared score.
+            </p>
+            <p>To combat the overfitting caused by adding interaction terms, we adopted PCA and forward feature selection to reduce the dimensionality of our model. Then, we came down to fitting, selecting and tuning models. In this part we exaustively tried every model we have learnt in class, as well as some extra models we did not have exposure in the class yet. Specifically, we implemented a feed-forward Neural Network with 2 hidden layers in PyTorch, and employed Extra Trees and Extreme Gradient Boosting as extra models. We also collected the best-performing models we found and stacked them together to form a meta model, which usually gave us the best performance. In a nutshell, both PCA and feature selection, coupled with a carefully tuned model, were able to achieve a test set R Squared of over 0.57, a significant improvement on the model without interaction terms and dimensionality reduction. <strong>The advantage of feature selection over PCA is that, the selected features and the order they are selected give us extra information about their importance to the model</strong>.
+            </p>
+            <p>In the end, the best model without interaction terms achieved a test set R Squared of 0.5098, and the best model with interaction terms achieved a test set R Squared of 0.5702. However, the sacrifice is more data processing steps (adding interaction terms, dimensionality reduction), and a more complicated model. In terms of model choices, <strong>tree based models generally perform better than other models</strong>. This might be due to tree based models' capability to capture non-linear relationships between predictors and response variables.
+            </p>
+            <p>Lastly, we made use of our followers prediction model to build a playlist generator. We attempted three different approaches of narrowing down the search space, random, exhaustive and greedy. We compared their performance in terms of predicted followers and computational cost, and arrived at a conclusion that <strong>with a significant reduction in computation time, greedy search is able to generate playlists almost as high quality as that of exhaustive search</strong>. Thus, it might be the more viable approach among the three.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-5 bg-dark">
+      <div class="container">
+        <p class="m-0 text-center text-white">Copyright &copy; Harvard AC209b 2017 Group 66</p>
+        <p class="m-0 text-center text-white">A project by <a href="https://www.linkedin.com/in/jiacshi/">Jiacheng Shi</a>, <a href="https://www.linkedin.com/in/tonyzhanguiuc/">Weihang Zhang</a>, <a href="https://www.linkedin.com/in/wang-yudi/">Yudi Wang</a> and <a href="https://www.linkedin.com/in/ziqi-guo-974aa69a/">Ziqi Guo</a></p>
+      </div>
+      <!-- /.container -->
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+
+    <!-- Plugin JavaScript -->
+    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+    <!-- Plotting Library -->
+    <script src="vendor/plotly-latest.min.js"></script>
+
+    <!-- Custom JavaScript for this theme -->
+    <script src="js/scrolling-nav.js"></script>
+    <script src="js/plots.js"></script>
+
+
+  </body>
+
+</html>

@@ -1,0 +1,33 @@
+body {
+    font-family: 'Montserrat'
+}
+
+
+header {
+    background-color: #1cca59
+}
+
+h1 {
+    color: #1cca59;
+}
+
+header h1 {
+    color: white;
+}
+
+.caption {
+    color: grey;
+    text-align: center;
+}
+
+.img {
+    text-align: center;
+}
+
+strong {
+    color: #1cca59;
+}
+
+a {
+    color: grey;
+}
