@@ -456,7 +456,19 @@
             <p>Lastly, we made use of our followers prediction model to build a playlist generator. We attempted three different approaches of narrowing down the search space, random, exhaustive and greedy. We compared their performance in terms of predicted followers and computational cost, and arrived at a conclusion that <strong>with a significant reduction in computation time, greedy search is able to generate playlists almost as high quality as that of exhaustive search</strong>. Thus, it might be the more viable approach among the three.</p>
 
             <br><br>
+            <h4>Future Work</h4>
+            <br>
+            <ol>
+              <li>With regard to the followers prediction model, it can potentially benefit from having more useful features. For example, the model can include features that capture the credibility of the playlist's creator. If the creator has published many other popular playlists in the past, his/her future playlist is more likely to receive a high number of followers.</li>
+              <br>
+              <li>For the playlist generator, we could potentially further extend the greedy method to avoid reevaluating all the options at each iteration. One option is to keep track of the best-scoring tracks and only evaluate these tracks at the next iteration. Another option is to incorporate similarity between tracks as an additional criterion of generating playlist.</li>
+              <br>
+              <li>If we could gather user-specific information, we could personalize this playlist recommendation system to cater to users' taste of music. This system can even be integrated into Spotify's current system to allow for a more thoughtful user experience.</li>
+            </ol>
+
+            <br><br>
             <h4>Related Works and References</h4>
+            <br>
             <ul>
               <li>Kaggle has a similar project called <a href="https://www.kaggle.com/aniruddhaachar/audio-features">Audio Features for Playlist Creation</a>. Instead of a regression model to predict the number of followers, the project is to classify classify songs into themes such as dinner, sleep, party or workout. We referred to some kernels in the project to get inspiration on feature engineering.</li><br>
               <li>To obtain data regarding genres, playlists and tracks on Spotify, we used Spotify's Web API. <a href="https://developer.spotify.com/web-api/endpoint-reference/">This page</a> provided the most help regarding the various get requests that are allowed on the API.</li><br>
