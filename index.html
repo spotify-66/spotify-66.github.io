@@ -63,7 +63,7 @@
         <div class="row">
           <div class="col-lg-8 mx-auto">
             <h1>Overview</h1><br>
-            <h4>Project Statement</h4>
+            <h4>Problem Statement</h4>
             <p>The basic scope of the project is that given a Spotify playlist, to build a regression model to predict the success of the playlist measured by the potential number of followers. With this model, we can generate a high-quality playlist, given a specified genre and a pool of tracks to choose from.</p>
             <p>To achieve the task of predicting followers, we can train a regression model on a set of labelled training data, with explanatory variables being a set of features derived from the playlist and its tracks, and response variable being the follower of the playlist.
               To generate a playlist, we will first take in inputs from the user, and then use our followers prediction model to identify the playlist that is predicted to have the most followers.
@@ -419,15 +419,19 @@
           <div class="col-lg-8 mx-auto">
             <h1>Playlist Generator</h1><br>
             <p>With a followers prediction model in place, what can we do with it? A direct application is to algorithmically generate a playlist out of many track candidates.</p>
-            <p>The problem comes in when the pool of candidates is too large, which is true for Spotify. Therefore, we will need some heuristic approach to help us narrow down the search space. Here we will explore three approaches:</p>
+            <p>The problem comes in when the pool of candidates is too large, which is true for Spotify. Therefore, we will need some track-level filtering to help us narrow down the search space. From our modeling, we understand that popularity is a key influencer of playlist followers. Therefore, we can use tracks' individual popularity as a criterion to do initial filtering of tracks. We adopted a scaling factor of 3 in our analysis, which means for a desired playlist length <em>d</em>, we kept only the top <em>3d</em> most popular tracks. After this step, we explored three approaches:</p>
             <ol>
-              <li><strong>Exhaustive search with track-level filtering.</strong> <br>From our modeling, we understand that popularity is a key influencer of playlist followers. Therefore, we can use tracks' individual popularity as a criterion to do initial filtering of tracks. After this, we iterate through all combinations of the narrowed-down pool and use our followers prediction model an evaluation function to select the highest-scoring combination.</li>
+              <li><strong>Exhaustive search.</strong> <br> We iterate through all combinations of the narrowed-down pool and use our followers prediction model an evaluation function to select the highest-scoring combination.</li>
               <li><strong>Greedy search.</strong><br>In this approach, we start with an empty playlist. At each step, we try different tracks to the existing playlist, and select the track that gives us the most improvement based on our followers prediction model.</li>
             </ol>
             <p>In general, our playlist generator has the signature of <em>playlist_generator(library, model, genre, length)</em>. <em>Library</em> stands for all the track candidates; <em>model</em> gives the followers prediction model; <em>genre</em> and <em>length</em> specify the genre and length of the playlist to be generated.</p>
+            <p>Below, we compared the performance of these two approaches plus a baseline defined by random generation. The goal is to achieve high predicted followers for the generated playlist, and also with relatively small computation time. We can see that in our examples, greedy method is able to match the predicted followers of the exhaustive method, but with far smaller computational cost, usually within 2 to 3 seconds. Greedy approach's computational cost also grows linearly, as opposed to exhaustive search's exponential growth.</p>
 
-            <div id="generator-followers-bar"></div><br>
-            <p class="caption">Figure 12. Comparison of different playlist generation approaches</p>
+            <div id="generator-followers-line"></div><br>
+            <p class="caption">Figure 12. Comparison of predicted followers for different playlist generation approaches</p><br>
+            <div id="generator-time-line"></div><br>
+            <p class="caption">Figure 13. Comparison of computation time for different playlist generation approaches</p>
+
 
           </div>
         </div>
@@ -450,6 +454,15 @@
             <p>In the end, the best model without interaction terms achieved a test set R Squared of 0.5098, and the best model with interaction terms achieved a test set R Squared of 0.5702. However, the sacrifice is more data processing steps (adding interaction terms, dimensionality reduction), and a more complicated model. In terms of model choices, <strong>tree based models generally perform better than other models</strong>. This might be due to tree based models' capability to capture non-linear relationships between predictors and response variables.
             </p>
             <p>Lastly, we made use of our followers prediction model to build a playlist generator. We attempted three different approaches of narrowing down the search space, random, exhaustive and greedy. We compared their performance in terms of predicted followers and computational cost, and arrived at a conclusion that <strong>with a significant reduction in computation time, greedy search is able to generate playlists almost as high quality as that of exhaustive search</strong>. Thus, it might be the more viable approach among the three.</p>
+
+            <br><br>
+            <h4>Related Works and References</h4>
+            <ul>
+              <li>Kaggle has a similar project called <a href="https://www.kaggle.com/aniruddhaachar/audio-features">Audio Features for Playlist Creation</a>. Instead of a regression model to predict the number of followers, the project is to classify classify songs into themes such as dinner, sleep, party or workout. We referred to some kernels in the project to get inspiration on feature engineering.</li><br>
+              <li>To obtain data regarding genres, playlists and tracks on Spotify, we used Spotify's Web API. <a href="https://developer.spotify.com/web-api/endpoint-reference/">This page</a> provided the most help regarding the various get requests that are allowed on the API.</li><br>
+              <li>We referred to <a href="http://pytorch.org/tutorials/beginner/pytorch_with_examples.html">PyTorch's documentation</a> to develop our feed-forward neural network.</li>
+            </ul>
+            <br><br>
           </div>
         </div>
       </div>

@@ -125,37 +125,100 @@ var layout = {
 };
 Plotly.newPlot('fnn-r2', data, layout);
 
+var trace1 = {
+    x: [3, 4, 5, 6, 7, 8],
+    y: [125665, 70712, 143839, 49952, 118606, 93744],
+    type: 'line',
+    name: 'Random'
+};
+var trace2 = {
+    x: [3, 4, 5, 6, 7, 8],
+    y: [368052, 344617, 274298, 229257, 232536, 238120],
+    type: 'line',
+    name: 'Exhaustive'
+};
+
+var trace3 = {
+    x: [3, 4, 5, 6, 7, 8],
+    y: [368052, 344617, 274298, 229257, 232536, 238120],
+    type: 'line',
+    name: 'Greedy'
+};
+
+var data = [trace1, trace2, trace3];
+var layout = {
+    xaxis: {
+        title: 'Playlist length'
+    },
+    yaxis: {
+        title: 'Predicted followers'
+    }
+};
+Plotly.newPlot('generator-followers-line', data, layout);
+
 
 var trace1 = {
-    x: ['Exhaustive', 'Greedy', 'Random'],
-    y: [6000, 5000, 3000],
-    text: [6000, 5000, 3000],
-    textposition: 'auto',
-    name: 'followers',
-    type: 'bar'
+    x: [3, 4, 5, 6, 7, 8],
+    y: [0.03, 0.03, 0.03, 0.03, 0.03, 0.03],
+    type: 'line',
+    name: 'Random'
 };
-
 var trace2 = {
-    x: ['Random', 'Greedy', 'Exhaustive'],
-    y: [1, 20, 100],
-    text: [1, 20, 100],
-    textposition: 'auto',
-    name: 'time',
-    yaxis: 'y2',
-    type: 'line'
+    x: [3, 4, 5, 6, 7, 8],
+    y: [2.77, 15.34, 96, 613, 3459, 21369],
+    type: 'line',
+    name: 'Exhaustive'
 };
 
-var data = [trace1, trace2];
+var trace3 = {
+    x: [3, 4, 5, 6, 7, 8],
+    y: [0.79, 1.38, 2.19, 3.74, 3.84, 5.04],
+    type: 'line',
+    name: 'Greedy'
+};
 
+var data = [trace1, trace2, trace3];
 var layout = {
-    title: 'Performance comparison of different generation approaches',
-    yaxis: {title: 'Predicted number of followers'},
-    yaxis2: {
-        title: 'Time needed to generate the playlist (s)',
-        overlaying: 'y',
-        side: 'right'
+    xaxis: {
+        title: 'Playlist length'
     },
-    legend: {"orientation": "h"}
+    yaxis: {
+        title: 'Computation time'
+    }
 };
+Plotly.newPlot('generator-time-line', data, layout);
 
-Plotly.newPlot('generator-followers-bar', data, layout);
+
+// var trace1 = {
+//     x: ['Exhaustive', 'Greedy', 'Random'],
+//     y: [6000, 5000, 3000],
+//     text: [6000, 5000, 3000],
+//     textposition: 'auto',
+//     name: 'followers',
+//     type: 'bar'
+// };
+//
+// var trace2 = {
+//     x: ['Random', 'Greedy', 'Exhaustive'],
+//     y: [1, 20, 100],
+//     text: [1, 20, 100],
+//     textposition: 'auto',
+//     name: 'time',
+//     yaxis: 'y2',
+//     type: 'line'
+// };
+//
+// var data = [trace1, trace2];
+//
+// var layout = {
+//     title: 'Performance comparison of different generation approaches',
+//     yaxis: {title: 'Predicted number of followers'},
+//     yaxis2: {
+//         title: 'Time needed to generate the playlist (s)',
+//         overlaying: 'y',
+//         side: 'right'
+//     },
+//     legend: {"orientation": "h"}
+// };
+//
+// Plotly.newPlot('generator-followers-bar', data, layout);
