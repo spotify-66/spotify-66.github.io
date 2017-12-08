@@ -55,6 +55,7 @@
       <div class="container text-center">
         <h1>AC209b Final Project</h1>
         <p class="lead">Spotify playlist followers prediction and algorithmic playlist generation</p>
+        <p id="info">Group 66: Jiacheng Shi, Weihang Zhang, Yudi Wang and Ziqi Guo</p>
       </div>
     </header>
 
@@ -169,6 +170,12 @@
               </tbody>
             </table>
 
+            <br><br>
+            <h4>Challenges</h4>
+            <p>There are several challenges we are faced with. First, the data is not ready-to-use. We need to collect our own data through Spotify Web API. It is up to us how we want to organize our data. Second, the data has relatively limited predictors considering the difficulty of the prediction task. These predictors are mostly at track-level, so we need to aggregate them effectively into a playlist-level in order to perform regression analysis. Another challenge lies in the playlist generation process. Searching for the playlist that is predicted to have the highest followers is an expensive combinatorial problem. We need to find alternatives to brute-force search.</p>
+
+
+
           </div>
         </div>
       </div>
@@ -224,7 +231,7 @@
           <div class="col-lg-8 mx-auto">
             <h1>Followers Prediction</h1><br>
             <h4>Data Transformation</h4>
-            <p>When we explore the distribution of the response variable, we found out that the distribution of playlist followers is heavily left-skewed. After transforming it to its logarithm scale, the distribution becomes much more normal. Therefore, in all our following modeling practices, we adopted the log scale of the original response variable.</p>
+            <p>When we explore the distribution of the response variable, we found out that the distribution of playlist followers is heavily right-skewed. After transforming it to its logarithm scale, the distribution becomes much more normal. Therefore, in all our following modeling practices, we adopted the log scale of the original response variable.</p>
 
             <img src="img/histogram1.png" height="220" width="350">
             <img src="img/histogram2.png" height="220" width="350">
@@ -328,9 +335,10 @@
             <p>As a last step of feature engineering, we added in the interaction terms between <em>genre</em> and all other predictors. This is motivated by our EDA that for different genres, different predictors might have particularly high or low effect than they normally do. Although train test R Squared 0.68, test set R Squared dropped to below 0.3. This is a clear sign for overfitting. Thus, in the next section, we resort to PCA and feature selection to reduce the dimension of the data matrix.</p>
             <br><br>
             <h4>Dimensionality Reduction</h4>
+            <p>From the attempts above, we realized that although we interaction terms might carry useful trends, adding all of them is subject to heavy overfitting. Hence, we want to explore two different options of dimensionality reduction: PCA and feature selection. After this, we will fit different models to the reduced data matrix, and compare their performance against each other, and also against the best performance before adding interaction terms.</p>
             <br>
             <h5>Principal Component Analysis (PCA)</h5>
-            <p>We used a 5-fold cross validation scheme to select the optimal number of principal components.</p>
+            <p>We developed a 5-fold cross validation scheme to select the best n_component for the PCA transformation. We also plotted out the evolution of cross validation training and testing R2 to better visualize the trend of model accuracies. We can see that both R2 increase swiftly as the number of principal components increases from 1 to 21. Since then, R2 only slowly increase with high volatility.</p>
 
             <div id="pca-cv"></div>
             <p class="caption">Figure 7. Cross validation training and testing R Squared for different n_components</p>
@@ -419,9 +427,9 @@
           <div class="col-lg-8 mx-auto">
             <h1>Playlist Generator</h1><br>
             <p>With a followers prediction model in place, what can we do with it? A direct application is to algorithmically generate a playlist out of many track candidates.</p>
-            <p>The problem comes in when the pool of candidates is too large, which is true for Spotify. Therefore, we will need some track-level filtering to help us narrow down the search space. From our modeling, we understand that popularity is a key influencer of playlist followers. Therefore, we can use tracks' individual popularity as a criterion to do initial filtering of tracks. We adopted a scaling factor of 3 in our analysis, which means for a desired playlist length <em>d</em>, we kept only the top <em>3d</em> most popular tracks. After this step, we explored three approaches:</p>
+            <p>The problem comes in when the pool of candidates is too large, which is true for Spotify. Therefore, we will need some track-level filtering to help us narrow down the search space. From our modeling, we understand that popularity is a key influencer of playlist followers. Therefore, we can use tracks' individual popularity as a criterion to do initial filtering of tracks. We adopted a scaling factor of 3 in our analysis, which means for a desired playlist length <em>d</em>, we kept only the top <em>3d</em> most popular tracks. After this step, we explored two approaches:</p>
             <ol>
-              <li><strong>Exhaustive search.</strong> <br> We iterate through all combinations of the narrowed-down pool and use our followers prediction model an evaluation function to select the highest-scoring combination.</li>
+              <li><strong>Exhaustive search.</strong> <br> We iterate through all combinations of the narrowed-down pool and use our followers prediction model an evaluation function to select the highest-scoring combination.</li><br>
               <li><strong>Greedy search.</strong><br>In this approach, we start with an empty playlist. At each step, we try different tracks to the existing playlist, and select the track that gives us the most improvement based on our followers prediction model.</li>
             </ol>
             <p>In general, our playlist generator has the signature of <em>playlist_generator(library, model, genre, length)</em>. <em>Library</em> stands for all the track candidates; <em>model</em> gives the followers prediction model; <em>genre</em> and <em>length</em> specify the genre and length of the playlist to be generated.</p>
@@ -485,6 +493,7 @@
       <div class="container">
         <p class="m-0 text-center text-white">Copyright &copy; Harvard AC209b 2017 Group 66</p>
         <p class="m-0 text-center text-white">A project by <a href="https://www.linkedin.com/in/jiacshi/">Jiacheng Shi</a>, <a href="https://www.linkedin.com/in/tonyzhanguiuc/">Weihang Zhang</a>, <a href="https://www.linkedin.com/in/wang-yudi/">Yudi Wang</a> and <a href="https://www.linkedin.com/in/ziqi-guo-974aa69a/">Ziqi Guo</a></p>
+        <p class="m-0 text-center text-white"><a href="https://drive.google.com/drive/folders/1QvpYae3CXYKffOFfdN9jIwyIM9y75vi0">Get used data</a></p>
       </div>
       <!-- /.container -->
     </footer>

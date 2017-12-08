@@ -32,7 +32,7 @@ a {
     color: lightskyblue;
 }
 
-{
-    position: absolute;
-
+#info {
+    font-size: 14px;
+    color: #8ff0b1;
 }
